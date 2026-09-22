@@ -1,37 +1,67 @@
 package com.aoife.choreshare.service
 
+import com.aoife.choreshare.dto.ShoppingListItemResponse
 import com.aoife.choreshare.model.ShoppingListItem
 import com.aoife.choreshare.repository.ShoppingListRepository
+import com.aoife.choreshare.repository.UserRepository
 import org.springframework.stereotype.Service
 
 @Service
 class ShoppingListService(
-    private val shoppingListRepository: ShoppingListRepository
+    private val shoppingListRepository: ShoppingListRepository,
+    private val userRepository: UserRepository
 ) {
-    fun getShoppingList(): List<ShoppingListItem> {
-        return shoppingListRepository.findAll()
+
+    fun getShoppingList(userId: Long): List<ShoppingListItemResponse> {
+        return shoppingListRepository
+            .findAllByUserId(userId)
+            .map { it.toResponse() }
     }
 
-    fun addItem(name: String): ShoppingListItem {
-        return shoppingListRepository.save(
-            ShoppingListItem(name = name)
+    fun addItem(
+        userId: Long,
+        name: String
+    ): ShoppingListItemResponse {
+        val user = userRepository.findById(userId)
+            .orElseThrow { IllegalArgumentException("User not found") }
+
+        val item = ShoppingListItem(
+            name = name,
+            user = user
         )
+
+        return shoppingListRepository.save(item).toResponse()
     }
 
-    fun updateBoughtStatus(id: Long, bought: Boolean): ShoppingListItem {
-        val item = shoppingListRepository.findById(id)
-            .orElseThrow { IllegalArgumentException("Shopping list item not found") }
+    fun updateBoughtStatus(
+        userId: Long,
+        id: Long,
+        bought: Boolean
+    ): ShoppingListItemResponse {
+        val item = shoppingListRepository
+            .findByIdAndUserId(id, userId)
+            ?: throw IllegalArgumentException("Shopping list item not found")
 
         item.bought = bought
 
-        return shoppingListRepository.save(item)
+        return shoppingListRepository.save(item).toResponse()
     }
 
-    fun deleteItem(id: Long) {
-        if (!shoppingListRepository.existsById(id)) {
-            throw IllegalArgumentException("Shopping list item not found")
-        }
+    fun deleteItem(
+        userId: Long,
+        id: Long
+    ) {
+        val item = shoppingListRepository
+            .findByIdAndUserId(id, userId)
+            ?: throw IllegalArgumentException("Shopping list item not found")
 
-        shoppingListRepository.deleteById(id)
+        shoppingListRepository.delete(item)
     }
+
+    private fun ShoppingListItem.toResponse() =
+        ShoppingListItemResponse(
+            id = id,
+            name = name,
+            bought = bought
+        )
 }

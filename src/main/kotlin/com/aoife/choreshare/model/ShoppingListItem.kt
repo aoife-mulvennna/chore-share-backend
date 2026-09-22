@@ -1,9 +1,6 @@
 package com.aoife.choreshare.model
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import jakarta.persistence.*
 
 @Entity
 data class ShoppingListItem(
@@ -13,5 +10,9 @@ data class ShoppingListItem(
 
     val name: String = "",
 
-    var bought: Boolean = false
+    var bought: Boolean = false,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    val user: User? = null
 )
