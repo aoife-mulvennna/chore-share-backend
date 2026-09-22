@@ -17,4 +17,13 @@ class ShoppingListService(
             ShoppingListItem(name = name)
         )
     }
+
+    fun updateBoughtStatus(id: Long, bought: Boolean): ShoppingListItem {
+        val item = shoppingListRepository.findById(id)
+            .orElseThrow { IllegalArgumentException("Shopping list item not found") }
+
+        item.bought = bought
+
+        return shoppingListRepository.save(item)
+    }
 }

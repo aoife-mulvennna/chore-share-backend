@@ -1,5 +1,6 @@
 package com.aoife.choreshare.controller
 
+import com.aoife.choreshare.dto.UpdateBoughtStatusRequest
 import com.aoife.choreshare.model.ShoppingListItem
 import com.aoife.choreshare.service.ShoppingListService
 import org.springframework.web.bind.annotation.*
@@ -20,6 +21,14 @@ class ShoppingListController(
         @RequestBody request: AddShoppingListItemRequest
     ): ShoppingListItem {
         return shoppingListService.addItem(request.name)
+    }
+
+    @PatchMapping("/{id}")
+    fun updateBoughtStatus(
+        @PathVariable id: Long,
+        @RequestBody request: UpdateBoughtStatusRequest
+    ): ShoppingListItem {
+        return shoppingListService.updateBoughtStatus(id, request.bought)
     }
 }
 

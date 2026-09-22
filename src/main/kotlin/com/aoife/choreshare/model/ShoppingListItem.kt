@@ -11,5 +11,7 @@ data class ShoppingListItem(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
 
-    val name: String = ""
+    val name: String = "",
+
+    var bought: Boolean = false
 )
