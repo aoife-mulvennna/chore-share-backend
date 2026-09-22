@@ -26,4 +26,12 @@ class ShoppingListService(
 
         return shoppingListRepository.save(item)
     }
+
+    fun deleteItem(id: Long) {
+        if (!shoppingListRepository.existsById(id)) {
+            throw IllegalArgumentException("Shopping list item not found")
+        }
+
+        shoppingListRepository.deleteById(id)
+    }
 }

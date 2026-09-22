@@ -30,6 +30,13 @@ class ShoppingListController(
     ): ShoppingListItem {
         return shoppingListService.updateBoughtStatus(id, request.bought)
     }
+
+    @DeleteMapping("/{id}")
+    fun deleteItem(
+        @PathVariable id: Long
+    ) {
+        shoppingListService.deleteItem(id)
+    }
 }
 
 data class AddShoppingListItemRequest(
