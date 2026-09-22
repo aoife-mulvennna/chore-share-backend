@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: chore-share-backend
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/chore_share
+    username: chore_share
+    password: chore_share_password
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
