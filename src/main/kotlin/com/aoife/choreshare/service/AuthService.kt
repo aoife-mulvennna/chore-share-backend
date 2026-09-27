@@ -2,7 +2,9 @@ package com.aoife.choreshare.service
 
 import com.aoife.choreshare.dto.LoginRequest
 import com.aoife.choreshare.dto.RegisterRequest
+import com.aoife.choreshare.model.ShoppingList
 import com.aoife.choreshare.model.User
+import com.aoife.choreshare.repository.ShoppingListRepository
 import com.aoife.choreshare.repository.UserRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -10,12 +12,15 @@ import org.springframework.stereotype.Service
 @Service
 class AuthService(
     private val userRepository: UserRepository,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val shoppingListRepository: ShoppingListRepository
 ) {
 
     fun register(request: RegisterRequest): User {
-        if (userRepository.existsByEmail(request.email)) {
-            throw IllegalArgumentException("An account with this email already exists")
+        if (userRepository.existsByEmail(request.email.lowercase())) {
+            throw IllegalArgumentException(
+                "An account with this email already exists"
+            )
         }
 
         val passwordHash = requireNotNull(
@@ -30,8 +35,17 @@ class AuthService(
             passwordHash = passwordHash
         )
 
-        return userRepository.save(user)
+        val savedUser = userRepository.save(user)
+
+        shoppingListRepository.save(
+            ShoppingList(
+                user = savedUser
+            )
+        )
+
+        return savedUser
     }
+
     fun login(request: LoginRequest): User {
         val user = userRepository.findByEmail(request.email.lowercase())
             ?: throw IllegalArgumentException("Invalid email or password")

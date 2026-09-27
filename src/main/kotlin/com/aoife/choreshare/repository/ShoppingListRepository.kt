@@ -1,14 +1,12 @@
 package com.aoife.choreshare.repository
 
-import com.aoife.choreshare.model.ShoppingListItem
+import com.aoife.choreshare.model.ShoppingList
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface ShoppingListRepository : JpaRepository<ShoppingListItem, Long> {
+interface ShoppingListRepository :
+    JpaRepository<ShoppingList, Long> {
 
-    fun findAllByUserId(userId: Long): List<ShoppingListItem>
+    fun findByUserId(userId: Long): ShoppingList?
 
-    fun findByIdAndUserId(
-        id: Long,
-        userId: Long
-    ): ShoppingListItem?
+    fun findByGroupId(groupId: Long): ShoppingList?
 }
